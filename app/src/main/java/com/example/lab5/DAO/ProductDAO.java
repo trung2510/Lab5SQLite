@@ -26,28 +26,51 @@ public class ProductDAO {
         db = dataBase.getWritableDatabase();
     }
 
-    public int insertProduct(Product product){
+    public int insertProduct(Product product) {
         ContentValues values = new ContentValues();
-        values.put("name",product.getmName());
-        values.put("price",product.getmPrice());
+        values.put("id", product.getmId());
+        values.put("name", product.getmName());
+        values.put("price", product.getmPrice());
 
-        try {
-            if (db.insert(TABLE_NAME,null,values) < 0) {
-                return -1;
-            }
-        }
-        catch (Exception e){
-            Log.e("ProductDAO: ", e.getMessage() );
+
+        if (db.insert(TABLE_NAME, null, values) < 0) {
+            return -1;
         }
 
         return 1;
     }
 
-    public List<Product> getAllProduct(){
+    public int updateProduct(Product product) {
+        ContentValues values = new ContentValues();
+        values.put("id", product.getmId());
+        values.put("name", product.getmName());
+        values.put("price", product.getmPrice());
+
+        try {
+            if (db.update(TABLE_NAME, values, "id=?", new String[]{product.getmId()}) < 0) {
+                return -1;
+            }
+        } catch (Exception e) {
+            Log.e("ProductDAO: ", e.getMessage());
+        }
+
+        return 1;
+    }
+
+    public int deleteProduct(String id) {
+        int result = -1;
+        try {
+            result = db.delete(TABLE_NAME, "id=?", new String[]{id});
+        } catch (Exception e) {
+        }
+        return result;
+    }
+
+    public List<Product> getAllProduct() {
         List<Product> listProduct = new ArrayList<>();
         String SELECT = "SELECT * FROM " + TABLE_NAME;
 
-        Cursor cursor = db.rawQuery(SELECT,null);
+        Cursor cursor = db.rawQuery(SELECT, null);
         cursor.moveToFirst();
         if (cursor.moveToFirst()) {
 
